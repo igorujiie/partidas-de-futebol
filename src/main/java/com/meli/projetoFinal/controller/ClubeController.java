@@ -1,6 +1,7 @@
 package com.meli.projetoFinal.controller;
 
 import com.meli.projetoFinal.dto.ClubeRequestDTO;
+import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.service.ClubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,23 @@ public class ClubeController {
     @Autowired
     private ClubeService clubeService;
 
-    @PostMapping()
+    @PostMapping("/ciarClube")
     public ResponseEntity<ClubeRequestDTO> cadastrar(@RequestBody ClubeRequestDTO clubeRequestDTO) {
         try {
-            String mensagem = clubeService.cadastrarClube(clubeRequestDTO);
+            ClubeRequestDTO mensagem = clubeService.cadastrarClube(clubeRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         }catch (Exception ex){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(clubeRequestDTO);
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ClubeRequestDTO> atualizar(@PathVariable Long id, @RequestBody ClubeRequestDTO clubeRequestDTO) {
+        try {
+            ClubeRequestDTO clubeAtualizado = clubeService.atualizarClube(id, clubeRequestDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(clubeAtualizado);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
