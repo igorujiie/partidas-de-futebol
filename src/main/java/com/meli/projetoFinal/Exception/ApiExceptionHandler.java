@@ -15,11 +15,6 @@ public class ApiExceptionHandler {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String lidarValidacao(MethodArgumentNotValidException ex) {
-        return "Dados inválidos: " + ex.getBindingResult().toString();
-    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -27,9 +22,4 @@ public class ApiExceptionHandler {
         return "Estado inválido: " + ex.getValue();
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public String lidarNomeClubeInvalido(MethodArgumentNotValidException ex){
-//        return "Nome do CLube deve ser maior que dois caracteres, valor inserido: " + ex.getBindingResult().toString();
-//    }
 }
