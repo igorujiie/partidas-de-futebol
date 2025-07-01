@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping("clube")
 public class ClubeController {
@@ -15,10 +18,10 @@ public class ClubeController {
     @Autowired
     private ClubeService clubeService;
 
-    @PostMapping("/ciarClube")
-    public ResponseEntity<ClubeRequestDTO> cadastrar(@RequestBody ClubeRequestDTO clubeRequestDTO) {
+    @PostMapping()
+    public ResponseEntity<Clube> cadastrar(@RequestBody ClubeRequestDTO clubeRequestDTO) {
         try {
-            ClubeRequestDTO mensagem = clubeService.cadastrarClube(clubeRequestDTO);
+            Clube mensagem = clubeService.cadastrarClube(clubeRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         }catch (Exception ex){
             return ResponseEntity.badRequest().build();
@@ -26,12 +29,32 @@ public class ClubeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClubeRequestDTO> atualizar(@PathVariable Long id, @RequestBody ClubeRequestDTO clubeRequestDTO) {
+    public ResponseEntity<Clube> atualizar(@PathVariable Long id, @RequestBody ClubeRequestDTO clubeRequestDTO) {
         try {
-            ClubeRequestDTO clubeAtualizado = clubeService.atualizarClube(id, clubeRequestDTO);
+            Clube clubeAtualizado = clubeService.atualizarClube(id, clubeRequestDTO);
             return ResponseEntity.status(HttpStatus.OK).body(clubeAtualizado);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Clube> buscar(@PathVariable Long id) {
+        try{
+            Clube buscarClube = clubeService.buscarClubePorId(id);
+            return ResponseEntity.status(HttpStatus.OK).body(buscarClube);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Clube>> buscarTodosClubes() {
+        try {
+            List<Clube> clubes = clubeService.buscarTodosClubes();
+            return ResponseEntity.status(HttpStatus.OK).body(clubes);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
         }
     }
 }

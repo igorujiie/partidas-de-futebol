@@ -16,7 +16,7 @@ public class Clube {
     @Enumerated(EnumType.STRING)
     private Estado estado;
 
+    private Boolean ativo;
     private String nome;
     private LocalDate dataCriacao;
-    private Boolean ativo;
 }
