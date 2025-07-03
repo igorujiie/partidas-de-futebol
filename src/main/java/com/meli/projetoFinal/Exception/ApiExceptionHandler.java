@@ -15,11 +15,20 @@ public class ApiExceptionHandler {
         return ex.getMessage();
     }
 
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String lidarEnumErro(MethodArgumentTypeMismatchException ex) {
-        return "Estado inválido: " + ex.getValue();
+    public String lidarValidacao(MethodArgumentNotValidException ex) {
+        String mensagem = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(java.util.stream.Collectors.joining("; "));
+        return "Dados inválidos: " + (mensagem.isEmpty() ? "Erro de validação." : mensagem);
     }
 
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String lidarEnumErro(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex) {
+        return "Estado inválido: " + ex.getValue();
+    }
 }

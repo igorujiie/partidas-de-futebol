@@ -4,10 +4,12 @@ import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.dto.ClubeRequestDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.repository.ClubeRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ClubeService {
@@ -44,10 +46,10 @@ public class ClubeService {
     }
 
     public Clube buscarClubePorId(Long id) {
-        return clubeRepository.findById(id).orElseThrow();
+        return clubeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public List<Clube> buscarTodosClubes() {
-        return clubeRepository.findAll();
+    public Page<Clube> buscarTodosClubes(Pageable pageable) {
+        return clubeRepository.findAll(pageable);
     }
 }

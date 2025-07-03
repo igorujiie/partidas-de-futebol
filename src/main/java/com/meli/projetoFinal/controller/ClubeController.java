@@ -5,9 +5,12 @@ import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.service.ClubeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -38,8 +41,8 @@ public class ClubeController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Clube>> buscarTodosClubes() {
-            List<Clube> clubes = clubeService.buscarTodosClubes();
+    public ResponseEntity<Page<Clube>> buscarTodosClubes(Pageable pageable) {
+            Page<Clube> clubes = clubeService.buscarTodosClubes(pageable);
             return ResponseEntity.status(HttpStatus.OK).body(clubes);
     }
 }
