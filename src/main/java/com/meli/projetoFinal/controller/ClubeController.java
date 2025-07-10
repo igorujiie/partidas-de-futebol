@@ -2,6 +2,7 @@ package com.meli.projetoFinal.controller;
 
 import com.meli.projetoFinal.dto.ClubeRequestDTO;
 import com.meli.projetoFinal.model.Clube;
+import com.meli.projetoFinal.model.Estado;
 import com.meli.projetoFinal.service.ClubeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
+
 
 @RestController
 @RequestMapping("clube")
@@ -41,8 +42,17 @@ public class ClubeController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<Clube>> buscarTodosClubes(Pageable pageable) {
-            Page<Clube> clubes = clubeService.buscarTodosClubes(pageable);
+    public ResponseEntity<Page<Clube>> buscarTodosClubes(@RequestParam(required = false) String nome,
+                                                         @RequestParam(required = false) Estado estado,
+                                                         @RequestParam(required = false) Boolean ativo,
+                                                         Pageable pageable) {
+            Page<Clube> clubes = clubeService.buscarTodosClubes(nome, estado,ativo, pageable);
             return ResponseEntity.status(HttpStatus.OK).body(clubes);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        clubeService.deletarClube(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

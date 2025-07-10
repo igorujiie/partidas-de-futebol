@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 public class Clube {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

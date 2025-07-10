@@ -1,5 +1,6 @@
 package com.meli.projetoFinal.service;
 
+import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.dto.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.repository.EstadioRepository;
@@ -17,20 +18,19 @@ public class EstadioService {
     public Estadio cadastrarEstadio(EstadioDTO estadioDTO) {
         Estadio estadio = new Estadio();
         estadio.setNome(estadioDTO.getNome());
-        estadioRepository.save(estadio);
-        return estadio;
+        return estadioRepository.save(estadio);
     }
 
 
     public Estadio atualizarEstadio(Long id, EstadioDTO estadioDTO) {
          Estadio estadio = estadioRepository.findById(id)
-             .orElseThrow(() -> new RuntimeException("Estádio não encontrado"));
+             .orElseThrow(() -> new DadoNaoEncontradoException("Estádio não encontrado"));
          estadio.setNome(estadioDTO.getNome());
          return estadioRepository.save(estadio);
     }
 
     public Estadio getEstadio(Long id) {
-        return estadioRepository.findById(id).orElseThrow(() -> new RuntimeException("Estádio não encontrado"));
+        return estadioRepository.findById(id).orElseThrow(() -> new DadoNaoEncontradoException("Estádio não encontrado"));
     }
 
     public List<Estadio> getEstadios() {

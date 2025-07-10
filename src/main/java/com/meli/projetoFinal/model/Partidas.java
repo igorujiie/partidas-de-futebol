@@ -2,8 +2,6 @@ package com.meli.projetoFinal.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,13 +30,13 @@ public class Partidas {
     private Estadio estadio;
 
     @Column(name = "gols_casa", nullable = false)
-    private Integer golsMandante;
+    private Integer golsCasa;
 
     @Column(name = "gols_visitante", nullable = false)
     private Integer golsVisitante;
 
     @Column(name = "data_hora", nullable = false)
-    private LocalDateTime data;
+    private LocalDate dataPartida;
 
 
 }
