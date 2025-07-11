@@ -1,5 +1,7 @@
 package com.meli.projetoFinal.service;
 
+import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
+import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.Exception.DadosInvalidosException;
 import com.meli.projetoFinal.dto.PartidasDTO;
 import com.meli.projetoFinal.model.Clube;
@@ -15,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PartidasService {
@@ -32,21 +32,20 @@ public class PartidasService {
     @Transactional
     public Partidas cadastrarPartida(PartidasDTO dto) {
         Clube clubeCasa = clubeRepository.findById(dto.getClubeCasa())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Clube casa não encontrado."));
+                .orElseThrow(() -> new DadoNaoEncontradoException("Clube casa não encontrado."));
         Clube clubeVisitante = clubeRepository.findById(dto.getClubeVisitante())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Clube visitante não encontrado."));
+                .orElseThrow(() -> new ConflitoDeDadosException("Clube visitante não encontrado."));
 
         if (!clubeCasa.getAtivo() || !clubeVisitante.getAtivo()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Um dos clubes está inativo.");
+            throw new ConflitoDeDadosException("Um dos clubes está inativo.");
         }
         if (dto.getDataPartida().isBefore(clubeCasa.getDataCriacao()) ||
                 dto.getDataPartida().isBefore(clubeVisitante.getDataCriacao())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Data da partida não pode ser anterior à data de criação de um dos clubes.");
+            throw new ConflitoDeDadosException("Data da partida não pode ser anterior à data de criação de um dos clubes.");
         }
 
         Estadio estadio = estadioRepository.findById(dto.getEstadioId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estádio não encontrado."));
+                .orElseThrow(() -> new DadosInvalidosException("Estádio não encontrado."));
 
         LocalDate dataPartida = dto.getDataPartida();
         LocalDate min = dataPartida.minusDays(2);
@@ -56,13 +55,12 @@ public class PartidasService {
         boolean clubeVisitanteConflito = partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(clubeVisitante, min, max);
 
         if (clubeCasaConflito || clubeVisitanteConflito) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Um dos clubes já possui outra partida marcada em menos de 48 horas.");
+            throw new ConflitoDeDadosException("Um dos clubes já possui outra partida marcada em menos de 48 horas.");
         }
 
         boolean estadioOcupado = partidasRepository.existsByEstadioAndDataPartida(estadio, dataPartida);
         if (estadioOcupado) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "O estádio já possui jogo marcado nesse dia.");
+            throw new ConflitoDeDadosException("O estádio já possui jogo marcado nesse dia.");
         }
 
 
