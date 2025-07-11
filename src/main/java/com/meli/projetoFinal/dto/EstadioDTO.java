@@ -1,5 +1,7 @@
 package com.meli.projetoFinal.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +9,7 @@ import lombok.Setter;
 @Setter
 public class EstadioDTO {
 
+    @NotNull
+    @Size(min =3, message = "O nome do estádio deve ter pelo menos 3 caracteres")
     private String nome;
 }

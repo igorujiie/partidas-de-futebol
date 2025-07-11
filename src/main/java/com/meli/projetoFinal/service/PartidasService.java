@@ -1,18 +1,20 @@
 package com.meli.projetoFinal.service;
 
-import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.Exception.DadosInvalidosException;
 import com.meli.projetoFinal.dto.PartidasDTO;
 import com.meli.projetoFinal.model.Clube;
+import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.model.Partidas;
 import com.meli.projetoFinal.repository.ClubeRepository;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import com.meli.projetoFinal.repository.PartidasRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,54 +28,64 @@ public class PartidasService {
     @Autowired
     private EstadioRepository estadioRepository;
 
+
+    @Transactional
     public Partidas cadastrarPartida(PartidasDTO dto) {
+        Clube clubeCasa = clubeRepository.findById(dto.getClubeCasa())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Clube casa não encontrado."));
+        Clube clubeVisitante = clubeRepository.findById(dto.getClubeVisitante())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Clube visitante não encontrado."));
 
-        Clube clubeCasa = clubeRepository.findById(dto.getClubeCasaId())
-                .orElseThrow(() -> new DadoNaoEncontradoException("Clube casa não encontrado"));
-        Clube clubeVisitante = clubeRepository.findById(dto.getClubeVisitanteId())
-                .orElseThrow(() -> new DadoNaoEncontradoException("Clube visitante não encontrado"));
-
-        if(dto.getClubeCasaId() == null || dto.getClubeVisitanteId() == null ||
-                dto.getEstadioId() == null || dto.getDataPartida() == null) {
-            throw new DadosInvalidosException("Dados invalidos  ou incompletos");
+        if (!clubeCasa.getAtivo() || !clubeVisitante.getAtivo()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Um dos clubes está inativo.");
+        }
+        if (dto.getDataPartida().isBefore(clubeCasa.getDataCriacao()) ||
+                dto.getDataPartida().isBefore(clubeVisitante.getDataCriacao())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Data da partida não pode ser anterior à data de criação de um dos clubes.");
         }
 
-        if (dto.getDataPartida().isBefore(clubeCasa.getDataCriacao()) || dto.getDataPartida().isBefore(clubeVisitante.getDataCriacao())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Data da partida não pode ser anterior à data de criação de um dos clubes envolvidos.");
+        Estadio estadio = estadioRepository.findById(dto.getEstadioId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estádio não encontrado."));
+
+        LocalDate dataPartida = dto.getDataPartida();
+        LocalDate min = dataPartida.minusDays(2);
+        LocalDate max = dataPartida.plusDays(2);
+
+        boolean clubeCasaConflito = partidasRepository.existsByClubeCasaAndDataPartidaBetween(clubeCasa, min, max);
+        boolean clubeVisitanteConflito = partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(clubeVisitante, min, max);
+
+        if (clubeCasaConflito || clubeVisitanteConflito) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Um dos clubes já possui outra partida marcada em menos de 48 horas.");
         }
+
+        boolean estadioOcupado = partidasRepository.existsByEstadioAndDataPartida(estadio, dataPartida);
+        if (estadioOcupado) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "O estádio já possui jogo marcado nesse dia.");
+        }
+
+
         Partidas partida = new Partidas();
-        partida.setClubeCasa(clubeRepository.findById(dto.getClubeCasaId()).orElseThrow());
-        partida.setClubeVisitante(clubeRepository.findById(dto.getClubeVisitanteId()).orElseThrow());
-        partida.setEstadio(estadioRepository.findById(dto.getEstadioId()).orElseThrow());
+        partida.setClubeCasa(clubeCasa);
+        partida.setClubeVisitante(clubeVisitante);
+        partida.setEstadio(estadio);
         partida.setGolsCasa(dto.getGolsCasa());
         partida.setGolsVisitante(dto.getGolsVisitante());
         partida.setDataPartida(dto.getDataPartida());
-        Partidas salva = partidasRepository.save(partida);
-        return salva;
-    }
 
-  public List<PartidasDTO> listarPartidas() {
-      List<Partidas> partidas = partidasRepository.findAll();
-      List<PartidasDTO> dtos = new ArrayList<>();
-      for (Partidas partida : partidas) {
-          dtos.add(toDTO(partida));
-      }
-      return dtos;
-  }
-
-    public PartidasDTO buscarPorId(Long id) {
-        Partidas partida = partidasRepository.findById(id).orElseThrow();
-        return toDTO(partida);
+        return partidasRepository.save(partida);
     }
 
     private PartidasDTO toDTO(Partidas partida) {
         PartidasDTO dto = new PartidasDTO();
-        dto.setClubeCasaId(partida.getClubeCasa().getId());
-        dto.setClubeVisitanteId(partida.getClubeVisitante().getId());
+        dto.setClubeCasa(partida.getClubeCasa().getId());
+        dto.setClubeVisitante(partida.getClubeVisitante().getId());
         dto.setEstadioId(partida.getEstadio().getId());
         dto.setGolsCasa(partida.getGolsCasa());
         dto.setGolsVisitante(partida.getGolsVisitante());
         dto.setDataPartida(partida.getDataPartida());
         return dto;
     }
+
 }

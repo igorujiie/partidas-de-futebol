@@ -1,6 +1,8 @@
 package com.meli.projetoFinal.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -29,10 +31,12 @@ public class Partidas {
     @JoinColumn(name = "clube_estadio_id")
     private Estadio estadio;
 
-    @Column(name = "gols_casa", nullable = false)
+    @NotNull(message = "Gols casa são obrigatórios")
+    @Min(value = 0, message = "Gols não pode ser negativo")
     private Integer golsCasa;
 
-    @Column(name = "gols_visitante", nullable = false)
+    @NotNull(message = "Gols visitante são obrigatórios")
+    @Min(value = 0, message = "Gols não pode ser negativo")
     private Integer golsVisitante;
 
     @Column(name = "data_hora", nullable = false)

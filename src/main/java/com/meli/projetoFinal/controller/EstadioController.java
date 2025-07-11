@@ -4,6 +4,8 @@ import com.meli.projetoFinal.dto.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.service.EstadioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +38,8 @@ public class EstadioController {
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<Estadio>> getEstadios() {
-        Iterable<Estadio> estadios = estadioService.getEstadios();
+    public ResponseEntity<Page<Estadio>> getEstadios(Pageable pageable) {
+        Page<Estadio> estadios = estadioService.getEstadios( pageable);
         return ResponseEntity.status(200).body(estadios);
     }
 
