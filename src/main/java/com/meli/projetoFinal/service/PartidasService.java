@@ -129,7 +129,6 @@ public class PartidasService {
         return partidasRepository.findAll(pageable);
     }
 
-    //deletar partidas
     public void deletePartida(Long id) {
         if (!partidasRepository.existsById(id)) {
             throw new DadoNaoEncontradoException("Partida não encontrado");        }
