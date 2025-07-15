@@ -22,12 +22,12 @@ package com.meli.projetoFinal.service;
 
 
             public Clube cadastrarClube(ClubeRequestDTO dto) {
-                if (clubeRepository.existsByNomeAndEstado(dto.getNome(), dto.getEstado())) {
+                if (clubeRepository.existsByNomeAndEstado(dto.getNome(), Estado.valueOf(dto.getEstado().toUpperCase()))) {
                     throw new ConflitoDeDadosException("Já existe um clube com esse nome nesse estado.");
                 }
                 Clube clube = new Clube();
                 clube.setNome(dto.getNome().toUpperCase());
-                clube.setEstado(dto.getEstado());
+                clube.setEstado(Estado.valueOf(dto.getEstado().toUpperCase()));
                 clube.setDataCriacao(dto.getDataCriacao());
                 clube.setAtivo(dto.getAtivo());
                 return clubeRepository.save(clube);
@@ -44,7 +44,7 @@ package com.meli.projetoFinal.service;
 
                 Clube clube = clubeRepository.findById(id).orElseThrow();
                 clube.setNome(clubeRequestDTO.getNome());
-                clube.setEstado(clubeRequestDTO.getEstado());
+                clube.setEstado(Estado.valueOf(clubeRequestDTO.getEstado()));
                 clube.setDataCriacao(clubeRequestDTO.getDataCriacao());
                 clube.setAtivo(clubeRequestDTO.getAtivo());
                 return clubeRepository.save(clube);

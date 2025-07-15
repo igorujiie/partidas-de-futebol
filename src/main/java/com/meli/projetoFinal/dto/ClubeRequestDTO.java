@@ -19,7 +19,7 @@ public class ClubeRequestDTO {
 
 
     @NotNull(message = "Estado é obrigatório")
-    private Estado estado;
+    private String estado;
 
     @NotNull(message = "Data de criação é obrigatória")
     @PastOrPresent(message = "A data de criação não pode ser no futuro")

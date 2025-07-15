@@ -1,0 +1,22 @@
+package com.meli.projetoFinal.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class RetrospectoClubeDTO {
+    private Long clubeId;
+    private String clubeNome;
+    private int vitorias;
+    private int empates;
+    private int derrotas;
+    private int golsFeitos;
+    private int golsSofridos;
+
+}

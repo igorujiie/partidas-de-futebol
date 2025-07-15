@@ -3,6 +3,7 @@ package com.meli.projetoFinal.controller;
 import com.meli.projetoFinal.dto.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.service.EstadioService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("estadio")
+@Tag(name = "Estadio")
 public class EstadioController {
 
     @Autowired
