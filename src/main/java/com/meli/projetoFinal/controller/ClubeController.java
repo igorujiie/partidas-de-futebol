@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.ClubeRequestDTO;
+import com.meli.projetoFinal.dto.ClubeDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estado;
 import com.meli.projetoFinal.service.ClubeService;
@@ -25,14 +25,14 @@ public class ClubeController {
     private ClubeService clubeService;
 
     @PostMapping()
-    public ResponseEntity<Clube> cadastrar(@RequestBody @Valid ClubeRequestDTO clubeRequestDTO) {
-        Clube mensagem = clubeService.cadastrarClube(clubeRequestDTO);
+    public ResponseEntity<Clube> cadastrar(@RequestBody @Valid ClubeDTO clubeDTO) {
+        Clube mensagem = clubeService.cadastrarClube(clubeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Clube> atualizar(@PathVariable Long id, @RequestBody @Valid ClubeRequestDTO clubeRequestDTO) {
-            Clube clubeAtualizado = clubeService.atualizarClube(id, clubeRequestDTO);
+    public ResponseEntity<Clube> atualizar(@PathVariable Long id, @RequestBody @Valid ClubeDTO clubeDTO) {
+            Clube clubeAtualizado = clubeService.atualizarClube(id, clubeDTO);
             return ResponseEntity.status(HttpStatus.OK).body(clubeAtualizado);
     }
 

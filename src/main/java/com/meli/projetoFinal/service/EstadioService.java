@@ -24,7 +24,7 @@ public class EstadioService {
             throw new ConflitoDeDadosException("Ja existe um estadio com esse nome");
         }
         Estadio estadio = new Estadio();
-        estadio.setNome(estadioDTO.getNome());
+        estadio.setNome(estadioDTO.getNome().toUpperCase());
         return estadioRepository.save(estadio);
     }
 
@@ -33,10 +33,10 @@ public class EstadioService {
          Estadio estadio = estadioRepository.findById(id)
              .orElseThrow(() -> new DadoNaoEncontradoException("Estádio não encontrado"));
 
-         if(estadio.getNome().equals(estadioDTO.getNome())) {
+         if(estadio.getNome().equals(estadioDTO.getNome().toUpperCase())) {
              throw new ConflitoDeDadosException("Ja existe um estadio com esse nome");
          }
-         estadio.setNome(estadioDTO.getNome());
+         estadio.setNome(estadioDTO.getNome().toUpperCase());
          return estadioRepository.save(estadio);
     }
 

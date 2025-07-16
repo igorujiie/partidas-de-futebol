@@ -1,18 +1,16 @@
 package com.meli.projetoFinal.dto;
 
-import com.meli.projetoFinal.model.Estado;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class ClubeRequestDTO {
+public class ClubeDTO {
     @NotBlank(message = "Nome é obrigatório")
     @Size(min = 2, message = "Nome deve ter pelo menos duas letras")
     private String nome;

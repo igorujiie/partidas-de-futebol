@@ -2,7 +2,7 @@ package com.meli.projetoFinal.service;
 
         import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
         import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
-        import com.meli.projetoFinal.dto.ClubeRequestDTO;
+        import com.meli.projetoFinal.dto.ClubeDTO;
         import com.meli.projetoFinal.model.Clube;
         import com.meli.projetoFinal.model.Estado;
         import com.meli.projetoFinal.repository.ClubeRepository;
@@ -21,7 +21,7 @@ package com.meli.projetoFinal.service;
             private ClubeRepository clubeRepository;
 
 
-            public Clube cadastrarClube(ClubeRequestDTO dto) {
+            public Clube cadastrarClube(ClubeDTO dto) {
                 if (clubeRepository.existsByNomeAndEstado(dto.getNome(), Estado.valueOf(dto.getEstado().toUpperCase()))) {
                     throw new ConflitoDeDadosException("Já existe um clube com esse nome nesse estado.");
                 }
@@ -33,20 +33,20 @@ package com.meli.projetoFinal.service;
                 return clubeRepository.save(clube);
             }
 
-            public Clube atualizarClube(Long id, ClubeRequestDTO clubeRequestDTO) {
+            public Clube atualizarClube(Long id, ClubeDTO clubeDTO) {
 
                 if(!clubeRepository.existsById(id)) {
                     throw new DadoNaoEncontradoException("Clube não encontrado");
                 }
-                if (clubeRequestDTO.getDataCriacao() == null || clubeRequestDTO.getDataCriacao().isAfter(LocalDate.now())) {
+                if (clubeDTO.getDataCriacao() == null || clubeDTO.getDataCriacao().isAfter(LocalDate.now())) {
                     throw new ConflitoDeDadosException("Data de criação inválida ou no futuro");
                 }
 
                 Clube clube = clubeRepository.findById(id).orElseThrow();
-                clube.setNome(clubeRequestDTO.getNome());
-                clube.setEstado(Estado.valueOf(clubeRequestDTO.getEstado()));
-                clube.setDataCriacao(clubeRequestDTO.getDataCriacao());
-                clube.setAtivo(clubeRequestDTO.getAtivo());
+                clube.setNome(clubeDTO.getNome().toUpperCase());
+                clube.setEstado(Estado.valueOf(clubeDTO.getEstado().toUpperCase()));
+                clube.setDataCriacao(clubeDTO.getDataCriacao());
+                clube.setAtivo(clubeDTO.getAtivo());
                 return clubeRepository.save(clube);
             }
 
