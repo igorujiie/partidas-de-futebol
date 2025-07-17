@@ -112,20 +112,15 @@ class ClubeServiceTest {
     void buscarTodosClubes_CasosDiferentes() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Clube> page = new PageImpl<>(Arrays.asList(new Clube()));
-        // Todos filtros
         when(clubeRepository.findByNomeAndEstadoAndAtivo(anyString(), any(Estado.class), anyBoolean(), eq(pageable)))
                 .thenReturn(page);
         Assertions.assertEquals(page, clubeService.buscarTodosClubes("Nome", Estado.SP, true, pageable));
-        // Nome
         when(clubeRepository.findByNome(anyString(), eq(pageable))).thenReturn(page);
         Assertions.assertEquals(page, clubeService.buscarTodosClubes("Nome", null, null, pageable));
-        // Estado
         when(clubeRepository.findByEstado(any(Estado.class), eq(pageable))).thenReturn(page);
         Assertions.assertEquals(page, clubeService.buscarTodosClubes(null, Estado.SP, null, pageable));
-        // Ativo
         when(clubeRepository.findByAtivo(anyBoolean(), eq(pageable))).thenReturn(page);
         Assertions.assertEquals(page, clubeService.buscarTodosClubes(null, null, true, pageable));
-        // Nenhum filtro
         when(clubeRepository.findAll(pageable)).thenReturn(page);
         Assertions.assertEquals(page, clubeService.buscarTodosClubes(null, null, null, pageable));
     }
