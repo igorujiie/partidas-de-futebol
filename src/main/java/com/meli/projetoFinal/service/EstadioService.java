@@ -1,17 +1,14 @@
 package com.meli.projetoFinal.service;
 
-import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
-import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
+import com.meli.projetoFinal.exception.ConflitoDeDadosException;
+import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.dto.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EstadioService {

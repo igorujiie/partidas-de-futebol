@@ -4,6 +4,8 @@ import com.meli.projetoFinal.dto.ClubeDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estado;
 import com.meli.projetoFinal.service.ClubeService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.meli.projetoFinal.service;
 
-import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
-import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
+import com.meli.projetoFinal.exception.ConflitoDeDadosException;
+import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.dto.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.repository.EstadioRepository;
@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;

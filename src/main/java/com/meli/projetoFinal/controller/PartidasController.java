@@ -1,9 +1,6 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.ConfrontoDiretoDTO;
-import com.meli.projetoFinal.dto.PartidasDTO;
-import com.meli.projetoFinal.dto.RetrospectoAdversarioDTO;
-import com.meli.projetoFinal.dto.RetrospectoClubeDTO;
+import com.meli.projetoFinal.dto.*;
 import com.meli.projetoFinal.model.Partidas;
 import com.meli.projetoFinal.service.PartidasService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,9 +39,6 @@ public class PartidasController {
     @GetMapping
     public ResponseEntity<Page<Partidas>> listarPartidas(Pageable pageable) {
         Page<Partidas> partidas = partidasService.getPartidas(pageable);
-        if (partidas.isEmpty() || partidas.getTotalElements() == 0) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(partidas);
     }
 
@@ -78,5 +72,12 @@ public class PartidasController {
             @RequestParam Long clubeId, @RequestParam Long adversarioId) {
         ConfrontoDiretoDTO dto = partidasService.getRetrospectoConfronto(clubeId, adversarioId);
         return ResponseEntity.ok(dto);
+    }
+    
+    
+    @GetMapping("/ranking")
+    public ResponseEntity<List<RankingDTO>> getRanking(@RequestParam String criterio) {
+        List<RankingDTO> ranking = partidasService.getRanking(criterio);
+        return ResponseEntity.ok(ranking);
     }
 }

@@ -1,7 +1,7 @@
 package com.meli.projetoFinal.service;
 
-import com.meli.projetoFinal.Exception.ConflitoDeDadosException;
-import com.meli.projetoFinal.Exception.DadoNaoEncontradoException;
+import com.meli.projetoFinal.exception.ConflitoDeDadosException;
+import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.dto.PartidasDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estadio;
@@ -10,7 +10,6 @@ import com.meli.projetoFinal.repository.ClubeRepository;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import com.meli.projetoFinal.repository.PartidasRepository;
 import com.meli.projetoFinal.templates.PartidasTemplate;
-import jakarta.servlet.http.Part;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

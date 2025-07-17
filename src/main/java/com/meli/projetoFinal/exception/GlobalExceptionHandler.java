@@ -1,4 +1,4 @@
-package com.meli.projetoFinal.Exception;
+package com.meli.projetoFinal.exception;
 
 
 import org.springframework.http.HttpStatus;
