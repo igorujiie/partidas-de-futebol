@@ -105,6 +105,14 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>com/meli/projetoFinal/dto/**</exclude>
+								<exclude>com/meli/projetoFinal/model/**</exclude>
+								<exclude>com/meli/projetoFinal/exception/**</exclude>
+								<exclude>com/meli/projetoFinal/ProjetoFinalApplication.java</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
