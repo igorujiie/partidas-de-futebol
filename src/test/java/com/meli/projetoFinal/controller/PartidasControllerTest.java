@@ -1,7 +1,6 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.PartidasDTO;
-import com.meli.projetoFinal.model.Estadio;
+import com.meli.projetoFinal.dto.*;
 import com.meli.projetoFinal.model.Partidas;
 import com.meli.projetoFinal.service.PartidasService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -91,6 +92,63 @@ class PartidasControllerTest {
         ResponseEntity<Partidas> result = partidasController.deletarPartida(id);
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
         verify(partidasService, times(1)).deletePartida(id);
+    }
+
+    @Test
+    void getRetrospectoClube_ReturnsRetrospectoForValidClubeId() {
+        Long clubeId = 1L;
+        RetrospectoClubeDTO dto = new RetrospectoClubeDTO();
+
+        when(partidasService.getRetrospectoClube(clubeId)).thenReturn(dto);
+
+        ResponseEntity<RetrospectoClubeDTO> response = partidasController.getRetrospectoClube(clubeId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody());
+        verify(partidasService, times(1)).getRetrospectoClube(clubeId);
+    }
+
+    @Test
+    void getRetrospectoContraAdversarios_ReturnsListForValidClubeId() {
+        Long clubeId = 1L;
+        List<RetrospectoAdversarioDTO> lista = List.of(new RetrospectoAdversarioDTO());
+
+        when(partidasService.getRetrospectoContraAdversarios(clubeId)).thenReturn(lista);
+
+        ResponseEntity<List<RetrospectoAdversarioDTO>> response = partidasController.getRetrospectoContraAdversarios(clubeId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(lista, response.getBody());
+        verify(partidasService, times(1)).getRetrospectoContraAdversarios(clubeId);
+    }
+
+    @Test
+    void getConfrontosDiretos_ReturnsConfrontoForValidIds() {
+        Long clubeId = 1L;
+        Long adversarioId = 2L;
+        ConfrontoDiretoDTO dto = new ConfrontoDiretoDTO();
+
+        when(partidasService.getRetrospectoConfronto(clubeId, adversarioId)).thenReturn(dto);
+
+        ResponseEntity<ConfrontoDiretoDTO> response = partidasController.getConfrontosDiretos(clubeId, adversarioId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody());
+        verify(partidasService, times(1)).getRetrospectoConfronto(clubeId, adversarioId);
+    }
+
+    @Test
+    void getRanking_ReturnsRankingForValidCriteria() {
+        String criterio = "pontos";
+        List<RankingDTO> ranking = List.of(new RankingDTO());
+
+        when(partidasService.getRanking(criterio)).thenReturn(ranking);
+
+        ResponseEntity<List<RankingDTO>> response = partidasController.getRanking(criterio);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ranking, response.getBody());
+        verify(partidasService, times(1)).getRanking(criterio);
     }
 
 }

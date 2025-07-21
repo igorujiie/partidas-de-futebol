@@ -4,7 +4,6 @@ import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.exception.DadosInvalidosException;
 import com.meli.projetoFinal.dto.*;
-import com.meli.projetoFinal.mapper.PartidasMapper;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.model.Partidas;
@@ -12,7 +11,6 @@ import com.meli.projetoFinal.repository.ClubeRepository;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import com.meli.projetoFinal.repository.PartidasRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ import java.util.Objects;
 public class PartidasService {
 
 
-    private  final PartidasRepository partidasRepository;
+    private final PartidasRepository partidasRepository;
 
     private final ClubeRepository clubeRepository;
 
@@ -148,9 +146,9 @@ public class PartidasService {
         int vitorias = 0, empates = 0, derrotas = 0, golsFeitos = 0, golsSofridos = 0;
 
         for (Partidas partida : partidas) {
-            boolean isCasa = partida.getClubeCasa().getId().equals(clubeId);
-            int golsPro = isCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
-            int golsContra = isCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
+            boolean timeCasa = verificarTimeCasa(clubeId, partida);
+            int golsPro = timeCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
+            int golsContra = timeCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
 
             golsFeitos += golsPro;
             golsSofridos += golsContra;
@@ -165,86 +163,18 @@ public class PartidasService {
 
 
     public List<RetrospectoAdversarioDTO> getRetrospectoContraAdversarios(Long clubeId) {
-        Clube clube = getClube(clubeId);
-
-        List<Partidas> todasPartidas = partidasRepository.findAll();
-        List<Partidas> partidas = new ArrayList<>();
-        for (int i = 0; i < todasPartidas.size(); i++) {
-            Partidas p = todasPartidas.get(i);
-            if ((p.getClubeCasa().getId().equals(clubeId)) || (p.getClubeVisitante().getId().equals(clubeId))) {
-                partidas.add(p);
-            }
-        }
-
         Map<Long, RetrospectoAdversarioDTO> mapa = new HashMap<>();
 
-        for (int i = 0; i < partidas.size(); i++) {
-            Partidas partida = partidas.get(i);
-            boolean isCasa;
-            if (partida.getClubeCasa().getId().equals(clubeId)) {
-                isCasa = true;
-            } else {
-                isCasa = false;
-            }
-
-            Clube adversario;
-            if (isCasa) {
-                adversario = partida.getClubeVisitante();
-            } else {
-                adversario = partida.getClubeCasa();
-            }
-            Long adversarioId = adversario.getId();
-
-            RetrospectoAdversarioDTO dto;
-            if (mapa.containsKey(adversarioId)) {
-                dto = mapa.get(adversarioId);
-            } else {
-                dto = new RetrospectoAdversarioDTO();
-                dto.setAdversarioId(adversarioId);
-                dto.setAdversarioNome(adversario.getNome());
-                dto.setGolsFeitos(0);
-                dto.setGolsSofridos(0);
-                dto.setVitorias(0);
-                dto.setEmpates(0);
-                dto.setDerrotas(0);
-            }
-
-            int golsPro, golsContra;
-            if (isCasa) {
-                golsPro = partida.getGolsCasa();
-                golsContra = partida.getGolsVisitante();
-            } else {
-                golsPro = partida.getGolsVisitante();
-                golsContra = partida.getGolsCasa();
-            }
-
-            dto.setGolsFeitos(dto.getGolsFeitos() + golsPro);
-            dto.setGolsSofridos(dto.getGolsSofridos() + golsContra);
-
-            if (golsPro > golsContra) {
-                dto.setVitorias(dto.getVitorias() + 1);
-            } else if (golsPro == golsContra) {
-                dto.setEmpates(dto.getEmpates() + 1);
-            } else {
-                dto.setDerrotas(dto.getDerrotas() + 1);
-            }
-
-            mapa.put(adversarioId, dto);
-        }
-
-        List<RetrospectoAdversarioDTO> resultado = new ArrayList<>();
-        for (RetrospectoAdversarioDTO dto : mapa.values()) {
-            resultado.add(dto);
-        }
-        return resultado;
+        VerificarSeExisteClube(clubeId);
+        List<Partidas> partidas = buscarPartidasDoClube(clubeId);
+        inserirDadosDoAdversario(clubeId, partidas, mapa);
+        return getRetrospectoAdversarioDTOS(mapa);
     }
 
 
     public ConfrontoDiretoDTO getRetrospectoConfronto(Long clubeAId, Long clubeBId) {
-        Clube clubeA = clubeRepository.findById(clubeAId)
-                .orElseThrow(() -> new DadoNaoEncontradoException("Clube A não encontrado"));
-        Clube clubeB = clubeRepository.findById(clubeBId)
-                .orElseThrow(() -> new DadoNaoEncontradoException("Clube B não encontrado"));
+        Clube clubeA = getClube(clubeAId);
+        Clube clubeB = getClube(clubeBId);
 
         List<Partidas> todasPartidas = partidasRepository.findAll();
         List<Partidas> partidas = new ArrayList<>();
@@ -261,10 +191,9 @@ public class PartidasService {
         int vitoriasB = 0, empatesB = 0, derrotasB = 0, golsFeitosB = 0, golsSofridosB = 0;
 
         for (Partidas partida : partidas) {
-            boolean aCasa = partida.getClubeCasa().getId().equals(clubeAId);
-            int golsA = aCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
-            int golsB = aCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
-
+            int[] gols = calcularGols(partida, clubeAId);
+            int golsA = gols[0];
+            int golsB = gols[1];
             golsFeitosA += golsA;
             golsSofridosA += golsB;
             golsFeitosB += golsB;
@@ -282,28 +211,7 @@ public class PartidasService {
             }
         }
 
-        RetrospectoClubeDTO retroA = new RetrospectoClubeDTO();
-        retroA.setClubeId(clubeA.getId());
-        retroA.setClubeNome(clubeA.getNome());
-        retroA.setVitorias(vitoriasA);
-        retroA.setEmpates(empatesA);
-        retroA.setDerrotas(derrotasA);
-        retroA.setGolsFeitos(golsFeitosA);
-        retroA.setGolsSofridos(golsSofridosA);
-
-        RetrospectoClubeDTO retroB = new RetrospectoClubeDTO();
-        retroB.setClubeId(clubeB.getId());
-        retroB.setClubeNome(clubeB.getNome());
-        retroB.setVitorias(vitoriasB);
-        retroB.setEmpates(empatesB);
-        retroB.setDerrotas(derrotasB);
-        retroB.setGolsFeitos(golsFeitosB);
-        retroB.setGolsSofridos(golsSofridosB);
-
-        ConfrontoDiretoDTO resp = new ConfrontoDiretoDTO();
-        resp.setPartidas(converterParaConfrontoDTO(partidas));
-        resp.setTime1(retroA);
-        resp.setTime2(retroB);
+        ConfrontoDiretoDTO resp = gerarRetrospectosDosClubes(clubeA, vitoriasA, empatesA, derrotasA, golsFeitosA, golsSofridosA, clubeB, vitoriasB, empatesB, derrotasB, golsFeitosB, golsSofridosB, partidas);
 
         return resp;
     }
@@ -369,9 +277,24 @@ public class PartidasService {
         return ranking;
     }
 
+    private static int[] calcularGols(Partidas partida, Long clubeAId) {
+        boolean ehTimeCasa = partida.getClubeCasa().getId().equals(clubeAId);
+        int golsA = ehTimeCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
+        int golsB = ehTimeCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
+        return new int[]{golsA, golsB};
+    }
+
     private Clube getClube(Long clubeId) {
         return clubeRepository.findById(clubeId)
                 .orElseThrow(() -> new DadoNaoEncontradoException("Clube não encontrado"));
+    }
+
+    private boolean VerificarSeExisteClube(Long clubeId) {
+        boolean existe = clubeRepository.existsById(clubeId);
+        if (!existe) {
+            throw new DadoNaoEncontradoException("Clube não encontrado");
+        }
+        return true;
     }
 
     private record buscarEValidarClubes(Clube clubeCasa, Clube clubeVisitante) {
@@ -398,5 +321,116 @@ public class PartidasService {
                     p.getDataPartida().toString()
             );
         }).toList();
+    }
+
+    private List<Partidas> buscarPartidasDoClube(Long clubeId) {
+        List<Partidas> todasPartidas = partidasRepository.findAll();
+        List<Partidas> partidas = new ArrayList<>();
+        for (Partidas p : todasPartidas) {
+            if ((p.getClubeCasa().getId().equals(clubeId)) || (p.getClubeVisitante().getId().equals(clubeId))) {
+                partidas.add(p);
+            }
+        }
+        return partidas;
+    }
+
+    private static List<RetrospectoAdversarioDTO> getRetrospectoAdversarioDTOS(Map<Long, RetrospectoAdversarioDTO> mapa) {
+        return new ArrayList<>(mapa.values());
+    }
+
+    private void inserirDadosDoAdversario(Long clubeId, List<Partidas> partidas, Map<Long, RetrospectoAdversarioDTO> mapa) {
+        for (int i = 0; i < partidas.size(); i++) {
+            Partidas partida = partidas.get(i);
+            boolean timeCasa = verificarTimeCasa(clubeId, partida);
+
+            Clube adversario = getIndicarAdversario(timeCasa, partida);
+            RetrospectoAdversarioDTO dto = getRetrospectoAdversarioDTO(adversario, mapa);
+            identificarGols(timeCasa, partida, dto);
+            mapa.put(adversario.getId(), dto);
+        }
+    }
+
+    private static RetrospectoAdversarioDTO getRetrospectoAdversarioDTO(Clube adversario, Map<Long, RetrospectoAdversarioDTO> mapa) {
+        RetrospectoAdversarioDTO dto;
+        Long adversarioId = adversario.getId();
+        if (mapa.containsKey(adversarioId)) {
+            dto = mapa.get(adversarioId);
+        } else {
+            dto = new RetrospectoAdversarioDTO();
+            dto.setAdversarioId(adversarioId);
+            dto.setAdversarioNome(adversario.getNome());
+            dto.setGolsFeitos(0);
+            dto.setGolsSofridos(0);
+            dto.setVitorias(0);
+            dto.setEmpates(0);
+            dto.setDerrotas(0);
+        }
+        return dto;
+    }
+
+    private static void identificarGols(boolean timeCasa, Partidas partida, RetrospectoAdversarioDTO dto) {
+        int golsPro, golsContra;
+        if (timeCasa) {
+            golsPro = partida.getGolsCasa();
+            golsContra = partida.getGolsVisitante();
+        } else {
+            golsPro = partida.getGolsVisitante();
+            golsContra = partida.getGolsCasa();
+        }
+
+        dto.setGolsFeitos(dto.getGolsFeitos() + golsPro);
+        dto.setGolsSofridos(dto.getGolsSofridos() + golsContra);
+
+        VerificarResultadoDoJogo(golsPro, golsContra, dto);
+    }
+
+    private static void VerificarResultadoDoJogo(int golsPro, int golsContra, RetrospectoAdversarioDTO dto) {
+        if (golsPro > golsContra) {
+            dto.setVitorias(dto.getVitorias() + 1);
+        } else if (golsPro == golsContra) {
+            dto.setEmpates(dto.getEmpates() + 1);
+        } else {
+            dto.setDerrotas(dto.getDerrotas() + 1);
+        }
+    }
+
+    private Clube getIndicarAdversario(boolean timeCasa, Partidas partida) {
+        Clube adversario;
+        if (timeCasa) {
+            adversario = partida.getClubeVisitante();
+        } else {
+            adversario = partida.getClubeCasa();
+        }
+        if (adversario == null) {
+            throw new DadoNaoEncontradoException("Adversário nao encontrado");
+        }
+        return adversario;
+    }
+
+    private static boolean verificarTimeCasa(Long clubeId, Partidas partida) {
+        return partida.getClubeCasa().getId().equals(clubeId);
+    }
+
+    private ConfrontoDiretoDTO gerarRetrospectosDosClubes(Clube clubeA, int vitoriasA, int empatesA, int derrotasA, int golsFeitosA, int golsSofridosA, Clube clubeB, int vitoriasB, int empatesB, int derrotasB, int golsFeitosB, int golsSofridosB, List<Partidas> partidas) {
+        RetrospectoClubeDTO retroA = retrospectoClube(clubeA, vitoriasA, empatesA, derrotasA, golsFeitosA, golsSofridosA);
+        RetrospectoClubeDTO retroB = retrospectoClube(clubeB, vitoriasB, empatesB, derrotasB, golsFeitosB, golsSofridosB);
+
+        ConfrontoDiretoDTO resp = new ConfrontoDiretoDTO();
+        resp.setPartidas(converterParaConfrontoDTO(partidas));
+        resp.setTime1(retroA);
+        resp.setTime2(retroB);
+        return resp;
+    }
+
+    private RetrospectoClubeDTO retrospectoClube(Clube clubeA, int vitoriasA, int empatesA, int derrotasA, int golsFeitosA, int golsSofridosA) {
+        RetrospectoClubeDTO retro = new RetrospectoClubeDTO();
+        retro.setClubeId(clubeA.getId());
+        retro.setClubeNome(clubeA.getNome());
+        retro.setVitorias(vitoriasA);
+        retro.setEmpates(empatesA);
+        retro.setDerrotas(derrotasA);
+        retro.setGolsFeitos(golsFeitosA);
+        retro.setGolsSofridos(golsSofridosA);
+        return retro;
     }
 }

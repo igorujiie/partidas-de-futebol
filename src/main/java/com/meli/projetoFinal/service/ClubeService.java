@@ -57,9 +57,9 @@ public class ClubeService {
 
     public Page<Clube> buscarTodosClubes(String nome, Estado estado, Boolean ativo, Pageable pageable) {
         if (nome != null && estado != null && ativo != null) {
-            return clubeRepository.findByNomeAndEstadoAndAtivo(nome, estado, ativo, pageable);
+            return clubeRepository.findByNomeAndEstadoAndAtivo(nome.toUpperCase(), estado, ativo, pageable);
         } else if (nome != null) {
-            return clubeRepository.findByNome(nome, pageable);
+            return clubeRepository.findByNome(nome.toUpperCase(), pageable);
         } else if (estado != null) {
             return clubeRepository.findByEstado(estado, pageable);
         } else if (ativo != null) {
