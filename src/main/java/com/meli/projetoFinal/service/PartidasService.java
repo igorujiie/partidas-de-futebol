@@ -41,40 +41,14 @@ public class PartidasService {
 
     @Transactional
     public Partidas cadastrarPartida(PartidasDTO dto) {
-        buscarEValidarClubes clubes = getBuscarEValidarClubes(dto);
+        buscarEValidarClubesEstadios clubes = getBuscarEValidarClubesEstadio(dto);
 
-        if (!clubes.clubeCasa.getAtivo() || !clubes.clubeVisitante.getAtivo()) {
-            throw new ConflitoDeDadosException("Um dos clubes está inativo.");
-        }
-        if (dto.getDataPartida().isBefore(clubes.clubeCasa.getDataCriacao()) ||
-                dto.getDataPartida().isBefore(clubes.clubeVisitante.getDataCriacao())) {
-            throw new ConflitoDeDadosException("Data da partida não pode ser anterior à data de criação de um dos clubes.");
-        }
-
-        Estadio estadio = estadioRepository.findById(dto.getEstadioId())
-                .orElseThrow(() -> new DadosInvalidosException("Estádio não encontrado."));
-
-        LocalDate dataPartida = dto.getDataPartida();
-        LocalDate min = dataPartida.minusDays(2);
-        LocalDate max = dataPartida.plusDays(2);
-
-        boolean clubeCasaConflito = partidasRepository.existsByClubeCasaAndDataPartidaBetween(clubes.clubeCasa, min, max);
-        boolean clubeVisitanteConflito = partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(clubes.clubeVisitante, min, max);
-
-        if (clubeCasaConflito || clubeVisitanteConflito) {
-            throw new ConflitoDeDadosException("Um dos clubes já possui outra partida marcada em menos de 48 horas.");
-        }
-
-        boolean estadioOcupado = partidasRepository.existsByEstadioAndDataPartida(estadio, dataPartida);
-        if (estadioOcupado) {
-            throw new ConflitoDeDadosException("O estádio já possui jogo marcado nesse dia.");
-        }
-
+       validarPartida(clubes.clubeCasa, clubes.clubeVisitante, dto.getDataPartida(), clubes.estadio);
 
         Partidas partida = new Partidas();
         partida.setClubeCasa(clubes.clubeCasa);
         partida.setClubeVisitante(clubes.clubeVisitante);
-        partida.setEstadio(estadio);
+        partida.setEstadio(clubes.estadio);
         partida.setGolsCasa(dto.getGolsCasa());
         partida.setGolsVisitante(dto.getGolsVisitante());
         partida.setDataPartida(dto.getDataPartida());
@@ -84,42 +58,22 @@ public class PartidasService {
 
     @Transactional
     public Partidas atualizarPartida(Long id, PartidasDTO dto) {
-        Partidas partida = partidasRepository.findById(id)
-                .orElseThrow(() -> new DadoNaoEncontradoException("Partida não encontrada."));
+        Partidas partida = getPartida(id);
+        buscarEValidarClubesEstadios clubes = getBuscarEValidarClubesEstadio(dto);
 
-        buscarEValidarClubes clubes = getBuscarEValidarClubes(dto);
-
-        if (!clubes.clubeCasa().getAtivo() || !clubes.clubeVisitante().getAtivo()) {
-            throw new ConflitoDeDadosException("Um dos clubes está inativo.");
-        }
-        if (dto.getDataPartida().isBefore(clubes.clubeCasa().getDataCriacao()) ||
-                dto.getDataPartida().isBefore(clubes.clubeVisitante().getDataCriacao())) {
-            throw new ConflitoDeDadosException("Data da partida não pode ser anterior à data de criação de um dos clubes.");
-        }
-
-        Estadio estadio = estadioRepository.findById(dto.getEstadioId())
-                .orElseThrow(() -> new DadosInvalidosException("Estádio não encontrado."));
-
-        LocalDate dataPartida = dto.getDataPartida();
-        LocalDate min = dataPartida.minusDays(2);
-        LocalDate max = dataPartida.plusDays(2);
-
-        boolean clubeCasaConflito = partidasRepository.existsByClubeCasaAndDataPartidaBetween(clubes.clubeCasa(), min, max);
-        boolean clubeVisitanteConflito = partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(clubes.clubeVisitante(), min, max);
-
-        if (clubeCasaConflito || clubeVisitanteConflito) {
-            throw new ConflitoDeDadosException("Um dos clubes já possui outra partida marcada em menos de 48 horas.");
-        }
-
-        boolean estadioOcupado = partidasRepository.existsByEstadioAndDataPartida(estadio, dataPartida);
-        if (estadioOcupado) {
-            throw new ConflitoDeDadosException("O estádio já possui jogo marcado nesse dia.");
-        }
+        validarPartida(clubes.clubeCasa, clubes.clubeVisitante, dto.getDataPartida(), clubes.estadio);
 
         partida.setClubeCasa(clubes.clubeCasa());
+        partida.setClubeVisitante(clubes.clubeVisitante);
+        partida.setEstadio(clubes.estadio);
+        partida.setGolsCasa(dto.getGolsCasa());
+        partida.setGolsVisitante(dto.getGolsVisitante());
+        partida.setDataPartida(dto.getDataPartida());
+
 
         return partidasRepository.save(partida);
     }
+
 
     public Partidas getPartida(Long id) {
         return partidasRepository.findById(id).orElseThrow(() -> new DadoNaoEncontradoException("Partida não encontrada."));
@@ -143,23 +97,9 @@ public class PartidasService {
                 .filter(p -> p.getClubeCasa().getId().equals(clubeId) || p.getClubeVisitante().getId().equals(clubeId))
                 .toList();
 
-        int vitorias = 0, empates = 0, derrotas = 0, golsFeitos = 0, golsSofridos = 0;
-
-        for (Partidas partida : partidas) {
-            boolean timeCasa = verificarTimeCasa(clubeId, partida);
-            int golsPro = timeCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
-            int golsContra = timeCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
-
-            golsFeitos += golsPro;
-            golsSofridos += golsContra;
-
-            if (golsPro > golsContra) vitorias++;
-            else if (golsPro == golsContra) empates++;
-            else derrotas++;
-        }
-
-        return new RetrospectoClubeDTO(clube.getId(), clube.getNome(), vitorias, empates, derrotas, golsFeitos, golsSofridos);
+        return calcularRetrospectoClube(clube, clubeId, partidas);
     }
+
 
 
     public List<RetrospectoAdversarioDTO> getRetrospectoContraAdversarios(Long clubeId) {
@@ -176,77 +116,65 @@ public class PartidasService {
         Clube clubeA = getClube(clubeAId);
         Clube clubeB = getClube(clubeBId);
 
-        List<Partidas> todasPartidas = partidasRepository.findAll();
-        List<Partidas> partidas = new ArrayList<>();
-        for (Partidas p : todasPartidas) {
-            boolean confrontoDireto =
-                    (p.getClubeCasa().getId().equals(clubeAId) && p.getClubeVisitante().getId().equals(clubeBId)) ||
-                            (p.getClubeCasa().getId().equals(clubeBId) && p.getClubeVisitante().getId().equals(clubeAId));
-            if (confrontoDireto) {
-                partidas.add(p);
-            }
-        }
+        List<Partidas> partidas = filtrarConfrontosDiretos(clubeAId, clubeBId);
 
-        int vitoriasA = 0, empatesA = 0, derrotasA = 0, golsFeitosA = 0, golsSofridosA = 0;
-        int vitoriasB = 0, empatesB = 0, derrotasB = 0, golsFeitosB = 0, golsSofridosB = 0;
+        RetrospectoClubeDTO retroA = calcularRetrospectoClube(clubeA, clubeAId, partidas);
+        RetrospectoClubeDTO retroB = calcularRetrospectoClube(clubeB, clubeBId, partidas);
 
-        for (Partidas partida : partidas) {
-            int[] gols = calcularGols(partida, clubeAId);
-            int golsA = gols[0];
-            int golsB = gols[1];
-            golsFeitosA += golsA;
-            golsSofridosA += golsB;
-            golsFeitosB += golsB;
-            golsSofridosB += golsA;
-
-            if (golsA > golsB) {
-                vitoriasA++;
-                derrotasB++;
-            } else if (golsA == golsB) {
-                empatesA++;
-                empatesB++;
-            } else {
-                derrotasA++;
-                vitoriasB++;
-            }
-        }
-
-        ConfrontoDiretoDTO resp = gerarRetrospectosDosClubes(clubeA, vitoriasA, empatesA, derrotasA, golsFeitosA, golsSofridosA, clubeB, vitoriasB, empatesB, derrotasB, golsFeitosB, golsSofridosB, partidas);
-
+        ConfrontoDiretoDTO resp = new ConfrontoDiretoDTO();
+        resp.setPartidas(converterParaConfrontoDTO(partidas));
+        resp.setTime1(retroA);
+        resp.setTime2(retroB);
         return resp;
     }
-
 
     public List<RankingDTO> getRanking(String criterio) {
         List<Partidas> partidas = partidasRepository.findAll();
         Map<Long, RankingDTO> rankingMap = new HashMap<>();
 
         for (Partidas partida : partidas) {
-            Long idCasa = partida.getClubeCasa().getId();
-            RankingDTO casa = rankingMap.getOrDefault(idCasa, new RankingDTO(idCasa, partida.getClubeCasa().getNome(), 0, 0, 0, 0));
-            casa.setGols(casa.getGols() + partida.getGolsCasa());
-            casa.setJogos(casa.getJogos() + 1);
-            if (partida.getGolsCasa() > partida.getGolsVisitante()) {
-                casa.setVitorias(casa.getVitorias() + 1);
-                casa.setPontos(casa.getPontos() + 3);
-            } else if (Objects.equals(partida.getGolsCasa(), partida.getGolsVisitante())) {
-                casa.setPontos(casa.getPontos() + 1);
-            }
-            rankingMap.put(idCasa, casa);
-
-            Long idVisitante = partida.getClubeVisitante().getId();
-            RankingDTO visitante = rankingMap.getOrDefault(idVisitante, new RankingDTO(idVisitante, partida.getClubeVisitante().getNome(), 0, 0, 0, 0));
-            visitante.setGols(visitante.getGols() + partida.getGolsVisitante());
-            visitante.setJogos(visitante.getJogos() + 1);
-            if (partida.getGolsVisitante() > partida.getGolsCasa()) {
-                visitante.setVitorias(visitante.getVitorias() + 1);
-                visitante.setPontos(visitante.getPontos() + 3);
-            } else if (Objects.equals(partida.getGolsCasa(), partida.getGolsVisitante())) {
-                visitante.setPontos(visitante.getPontos() + 1);
-            }
-            rankingMap.put(idVisitante, visitante);
+            atualizarRankingParaClubeCasa(partida, rankingMap);
+            atualizarRankingParaClubeVisitante(partida, rankingMap);
+        }
+        List<RankingDTO> ranking = gerenciarTipoDeCriterioRaking(criterio, rankingMap);
+        if (ranking.isEmpty()) {
+            throw new DadoNaoEncontradoException("Nenhum clube encontrado para o ranking");
         }
 
+        return ranking;
+    }
+
+
+
+    private void atualizarRankingParaClubeCasa(Partidas partida, Map<Long, RankingDTO> rankingMap) {
+        Long idCasa = partida.getClubeCasa().getId();
+        RankingDTO casa = rankingMap.getOrDefault(idCasa, new RankingDTO(idCasa, partida.getClubeCasa().getNome(), 0, 0, 0, 0));
+        casa.setGols(casa.getGols() + partida.getGolsCasa());
+        casa.setJogos(casa.getJogos() + 1);
+        if (partida.getGolsCasa() > partida.getGolsVisitante()) {
+            casa.setVitorias(casa.getVitorias() + 1);
+            casa.setPontos(casa.getPontos() + 3);
+        } else if (Objects.equals(partida.getGolsCasa(), partida.getGolsVisitante())) {
+            casa.setPontos(casa.getPontos() + 1);
+        }
+        rankingMap.put(idCasa, casa);
+    }
+
+    private void atualizarRankingParaClubeVisitante(Partidas partida, Map<Long, RankingDTO> rankingMap) {
+        Long idVisitante = partida.getClubeVisitante().getId();
+        RankingDTO visitante = rankingMap.getOrDefault(idVisitante, new RankingDTO(idVisitante, partida.getClubeVisitante().getNome(), 0, 0, 0, 0));
+        visitante.setGols(visitante.getGols() + partida.getGolsVisitante());
+        visitante.setJogos(visitante.getJogos() + 1);
+        if (partida.getGolsVisitante() > partida.getGolsCasa()) {
+            visitante.setVitorias(visitante.getVitorias() + 1);
+            visitante.setPontos(visitante.getPontos() + 3);
+        } else if (Objects.equals(partida.getGolsCasa(), partida.getGolsVisitante())) {
+            visitante.setPontos(visitante.getPontos() + 1);
+        }
+        rankingMap.put(idVisitante, visitante);
+    }
+
+    private static List<RankingDTO> gerenciarTipoDeCriterioRaking(String criterio, Map<Long, RankingDTO> rankingMap) {
         List<RankingDTO> ranking = new ArrayList<>(rankingMap.values());
 
         switch (criterio) {
@@ -269,12 +197,41 @@ public class PartidasService {
             default:
                 throw new IllegalArgumentException("Critério inválido");
         }
+        return ranking;
+    }
 
-        if (ranking.isEmpty()) {
-            throw new DadoNaoEncontradoException("Nenhum clube encontrado para o ranking");
+    private List<Partidas> filtrarConfrontosDiretos(Long clubeAId, Long clubeBId) {
+        List<Partidas> todasPartidas = partidasRepository.findAll();
+        List<Partidas> partidas = new ArrayList<>();
+        for (Partidas p : todasPartidas) {
+            boolean confrontoDireto =
+                    (p.getClubeCasa().getId().equals(clubeAId) && p.getClubeVisitante().getId().equals(clubeBId)) ||
+                            (p.getClubeCasa().getId().equals(clubeBId) && p.getClubeVisitante().getId().equals(clubeAId));
+            if (confrontoDireto) {
+                partidas.add(p);
+            }
+        }
+        return partidas;
+    }
+
+
+    private RetrospectoClubeDTO calcularRetrospectoClube(Clube clube, Long clubeId, List<Partidas> partidas) {
+        int vitorias = 0, empates = 0, derrotas = 0, golsFeitos = 0, golsSofridos = 0;
+
+        for (Partidas partida : partidas) {
+            boolean timeCasa = verificarTimeCasa(clubeId, partida);
+            int golsPro = timeCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
+            int golsContra = timeCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
+
+            golsFeitos += golsPro;
+            golsSofridos += golsContra;
+
+            if (golsPro > golsContra) vitorias++;
+            else if (golsPro == golsContra) empates++;
+            else derrotas++;
         }
 
-        return ranking;
+        return new RetrospectoClubeDTO(clube.getId(), clube.getNome(), vitorias, empates, derrotas, golsFeitos, golsSofridos);
     }
 
     private static int[] calcularGols(Partidas partida, Long clubeAId) {
@@ -297,16 +254,43 @@ public class PartidasService {
         return true;
     }
 
-    private record buscarEValidarClubes(Clube clubeCasa, Clube clubeVisitante) {
+    private record buscarEValidarClubesEstadios(Clube clubeCasa, Clube clubeVisitante, Estadio estadio) {
 
     }
 
-    private buscarEValidarClubes getBuscarEValidarClubes(PartidasDTO dto) {
+    private void validarPartida(Clube clubeCasa, Clube clubeVisitante, LocalDate dataPartida, Estadio estadio) {
+        if (!clubeCasa.getAtivo() || !clubeVisitante.getAtivo()) {
+            throw new ConflitoDeDadosException("Um dos clubes está inativo.");
+        }
+        if (dataPartida.isBefore(clubeCasa.getDataCriacao()) ||
+                dataPartida.isBefore(clubeVisitante.getDataCriacao())) {
+            throw new ConflitoDeDadosException("Data da partida não pode ser anterior à data de criação de um dos clubes.");
+        }
+
+        LocalDate min = dataPartida.minusDays(2);
+        LocalDate max = dataPartida.plusDays(2);
+
+        boolean clubeCasaConflito = partidasRepository.existsByClubeCasaAndDataPartidaBetween(clubeCasa, min, max);
+        boolean clubeVisitanteConflito = partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(clubeVisitante, min, max);
+
+        if (clubeCasaConflito || clubeVisitanteConflito) {
+            throw new ConflitoDeDadosException("Um dos clubes já possui outra partida marcada em menos de 48 horas.");
+        }
+
+        boolean estadioOcupado = partidasRepository.existsByEstadioAndDataPartida(estadio, dataPartida);
+        if (estadioOcupado) {
+            throw new ConflitoDeDadosException("O estádio já possui jogo marcado nesse dia.");
+        }
+    }
+
+    private buscarEValidarClubesEstadios getBuscarEValidarClubesEstadio(PartidasDTO dto) {
         Clube clubeCasa = clubeRepository.findById(dto.getClubeCasa())
                 .orElseThrow(() -> new DadoNaoEncontradoException("Clube casa não encontrado."));
         Clube clubeVisitante = clubeRepository.findById(dto.getClubeVisitante())
                 .orElseThrow(() -> new DadoNaoEncontradoException("Clube visitante não encontrado."));
-        return new buscarEValidarClubes(clubeCasa, clubeVisitante);
+        Estadio estadio = estadioRepository.findById(dto.getEstadioId())
+                .orElseThrow(() -> new DadosInvalidosException("Estádio não encontrado."));
+        return new buscarEValidarClubesEstadios(clubeCasa, clubeVisitante, estadio);
     }
 
     private List<ConfrontoDiretoResponseDTO> converterParaConfrontoDTO(List<Partidas> partidas) {

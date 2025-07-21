@@ -420,7 +420,7 @@ class PartidasServiceTest {
         when(partidasRepository.findById(id)).thenReturn(Optional.of(partida));
         when(clubeRepository.findById(clubeCasa.getId())).thenReturn(Optional.of(clubeCasa));
         when(clubeRepository.findById(clubeVisitante.getId())).thenReturn(Optional.of(clubeVisitante));
-        when(estadioRepository.findById(estadio.getId())).thenReturn(Optional.of(estadio));
+        when(estadioRepository.findById(any())).thenReturn(Optional.of(PartidasTemplate.estadio()));
         when(partidasRepository.existsByClubeCasaAndDataPartidaBetween(any(), any(), any())).thenReturn(false);
         when(partidasRepository.existsByClubeVisitanteAndDataPartidaBetween(any(), any(), any())).thenReturn(false);
         when(partidasRepository.existsByEstadioAndDataPartida(any(), any())).thenReturn(false);
