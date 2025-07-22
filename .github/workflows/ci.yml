@@ -1,4 +1,4 @@
-name: Continuous integration
+name: Auto PR from feature branches
 
 permissions:
   contents: write
@@ -8,22 +8,25 @@ on:
   push:
     branches:
       - 'feature/*'
-    # Removido o 'pull_request' para deixar mais claro
 
 jobs:
-  open-pull-request:
+  create-pull-request:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Cria (ou atualiza) um PR da feature/* para develop
       - name: Create Pull Request to develop
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           base: develop
           branch: ${{ github.ref_name }}
           title: 'Merge ${{ github.ref_name }} into develop'
           body: |
-            Pull request automático para merge da feature na develop.
-            > Atenção: O merge NÃO será feito automaticamente. Por favor, revise e faça o merge manualmente.
-          token: ${{ secrets.GITHUB_TOKEN }}
+            PR criado automaticamente para revisão e merge manual.
+            
+            Por favor, revise e faça o merge deste PR manualmente.
+          # Não inserir merge-method! Isso impede merge automático.
+          # Não use draft: true, pois PRs já estarão abertos para revisão
