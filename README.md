@@ -53,4 +53,3 @@ A aplicação possui uma documentação Swagger, que pode ser acessada em: [http
 2. Acesse o link acima no seu navegador
 3. Explore os endpoints e seus detalhes
 
-
