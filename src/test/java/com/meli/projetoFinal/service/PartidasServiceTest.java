@@ -263,6 +263,35 @@ class PartidasServiceTest {
         verify(partidasRepository, times(1)).findAll(pageable);
     }
 
+    @Test
+    void getPartidas_RetornaPaginaComPartidasGoleadas() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("dataPartida").descending());
+        Page<Partidas> page = new PageImpl<>(Arrays.asList(new Partidas(), new Partidas()));
+        boolean goleada = true;
+        when(partidasRepository.buscarPartidasGoleadas(pageable,goleada)).thenReturn(page);
+
+        Page<Partidas> resultado = partidasService.getPartidas(pageable,goleada);
+
+        Assertions.assertNotNull(resultado);
+        Assertions.assertEquals(2, resultado.getContent().size());
+        verify(partidasRepository, times(1)).buscarPartidasGoleadas(pageable,goleada);
+    }
+
+    @Test
+    void getPartidas_RetornaPaginaVaziaQuandoNaoHaPartidasGoleadas() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Partidas> page = new PageImpl<>(List.of());
+        boolean goleada = true;
+
+        when(partidasRepository.buscarPartidasGoleadas(pageable,goleada)).thenReturn(page);
+
+        Page<Partidas> resultado = partidasService.getPartidas(pageable, goleada);
+
+        Assertions.assertNotNull(resultado);
+        Assertions.assertTrue(resultado.getContent().isEmpty());
+        verify(partidasRepository, times(1)).buscarPartidasGoleadas(pageable,goleada);
+    }
+
 
     @Test
     void atualizarPartida_Sucesso() {
