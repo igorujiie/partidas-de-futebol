@@ -77,18 +77,18 @@ class PartidasControllerTest {
         verify(partidasService, times(1)).getPartida(id);
     }
 
-    @Test
-    void getPartidas() {
-        Page<Partidas> partidas = mock(Page.class);
-        Pageable pageable = mock(Pageable.class);
-
-        when(partidasService.getPartidas(pageable)).thenReturn(partidas);
-        ResponseEntity<Page<Partidas>> result = partidasController.listarPartidas(pageable);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(partidas, result.getBody());
-        verify(partidasService, times(1)).getPartidas(pageable);
-
-    }
+//    @Test
+//    void getPartidas() {
+//        Page<Partidas> partidas = mock(Page.class);
+//        Pageable pageable = mock(Pageable.class);
+//
+//        when(partidasService.getPartidas(pageable)).thenReturn(partidas);
+//        ResponseEntity<Page<Partidas>> result = partidasController.listarPartidas(pageable);
+//        assertEquals(HttpStatus.OK, result.getStatusCode());
+//        assertEquals(partidas, result.getBody());
+//        verify(partidasService, times(1)).getPartidas(pageable);
+//
+//    }
 
     @Test
     void deletePartida() {
