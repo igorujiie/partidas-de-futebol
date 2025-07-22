@@ -1,0 +1,30 @@
+name: Continuous integration
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Esse script deve ser executado sempre que alguém executar
+# um GIT PUSH para qualquer branch feature/*.
+on:
+  push:
+    branches:
+      - 'feature/*'
+
+jobs:
+  merge-into-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Foi disponibilizado no GH Marketplace uma Action chamada merge-branch.
+      # Existem outras opções também, mas essa me pareceu a mais simples.
+      # Essa Action executa o MERGE da branch atual (uma branch feature)
+      # para a branch `develop`.
+      - name: Merge feature commits into develop
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          target_branch: develop
+          github_token: ${{secrets.GITHUB_TOKEN}}
