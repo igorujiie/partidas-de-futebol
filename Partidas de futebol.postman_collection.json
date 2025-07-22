@@ -1,0 +1,405 @@
+{
+	"info": {
+		"_postman_id": "8dc6f791-6bff-41d9-a306-11db06715c87",
+		"name": "Partidas de futebol",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46354480"
+	},
+	"item": [
+		{
+			"name": "Clube",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "criar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\n        \"estado\": \"SP\",\n        \"ativo\": true,\n        \"nome\": \"Santos\",\n        \"dataCriacao\": \"2025-07-01\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/clube",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\n        \"estado\": \"SP\",\n        \"ativo\": true,\n        \"nome\": \"Santos\",\n        \"dataCriacao\": \"2025-07-01\"\n    }"
+						},
+						"url": {
+							"raw": "http://localhost:8080/clube/22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube",
+								"22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "atualizarClube",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\n        \"estado\": \"SP\",\n        \"ativo\": true,\n        \"nome\": \"Santos\",\n        \"dataCriacao\": \"2025-07-02\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/clube/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clube",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/clube/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Estadio",
+			"item": [
+				{
+					"name": "estadio",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\n    \"nome\": \"mineirao\"\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/estadio",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getall",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estadio",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estadio/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadio",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "atualizar estadio",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\n        \"estado\": \"SP\",\n        \"ativo\": true,\n        \"nome\": \"Santos\",\n        \"dataCriacao\": \"2025-07-01\"\n    }"
+						},
+						"url": {
+							"raw": "http://localhost:8080/clube",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Partidas",
+			"item": [
+				{
+					"name": "getall",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/partidas?page=0&size=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"partidas"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partida",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"NomeDoClube\",\n    \"estado\": \"SP\",\n    \"dataCriacao\": \"2024-01-01\",\n    \"ativo\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/clube",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clube"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Partida",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/partidas/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrospectoClube",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "retrospectoAdversario",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Confronto",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/partidas/retrospecto/confronto?clubeId=2&adversarioId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"retrospecto",
+								"confronto"
+							],
+							"query": [
+								{
+									"key": "clubeId",
+									"value": "2"
+								},
+								{
+									"key": "adversarioId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ranking",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/partidas/ranking?criterio=pontos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"ranking"
+							],
+							"query": [
+								{
+									"key": "criterio",
+									"value": "pontos"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
