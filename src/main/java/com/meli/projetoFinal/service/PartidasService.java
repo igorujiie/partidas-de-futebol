@@ -82,7 +82,7 @@ public class PartidasService {
 
     public Page<Partidas> getPartidas(Pageable pageable, boolean goleadas) {
         if (goleadas) {
-            return partidasRepository.buscarPartidasGoleadas(pageable,goleadas);
+            return partidasRepository.buscarPartidasGoleadas(pageable, true);
         }
         return partidasRepository.findAll(pageable);
     }
