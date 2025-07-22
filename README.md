@@ -29,7 +29,7 @@ Aplicação Spring Boot para gerenciamento de partidas de futebol, clubes, está
 
 1. Clone o repositório:
    ```sh
-   git clone https://github.
+   https://github.com/igorujiie/partidas-de-futebol.git
    
 
 
@@ -52,3 +52,4 @@ A aplicação possui uma documentação Swagger, que pode ser acessada em: [http
 1. Inicie a aplicação
 2. Acesse o link acima no seu navegador
 3. Explore os endpoints e seus detalhes
+

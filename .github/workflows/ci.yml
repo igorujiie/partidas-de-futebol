@@ -21,10 +21,6 @@ jobs:
       - name: Create Pull Request to develop
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: develop
-          branch: ${{ github.ref_name }}
-          title: 'Merge ${{ github.ref_name }} into develop'
-          body: |
-            PR criado automaticamente para revisão e merge manual.
-            Por favor, revise e faça o merge deste PR manualmente.
+          type: now
+          target_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
