@@ -20,10 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -236,31 +233,35 @@ class PartidasServiceTest {
         });
     }
 
-//    @Test
-//    void getPartidas_RetornaPaginaComPartidas() {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<Partidas> page = new PageImpl<>(Arrays.asList(new Partidas(), new Partidas()));
-//        when(partidasRepository.findAll(pageable)).thenReturn(page);
-//
-//        Page<Partidas> resultado = partidasService.getPartidas(pageable);
-//
-//        Assertions.assertNotNull(resultado);
-//        Assertions.assertEquals(2, resultado.getContent().size());
-//        verify(partidasRepository, times(1)).findAll(pageable);
-//    }
+    @Test
+    void getPartidas_RetornaPaginaComPartidas() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("dataPartida").descending());
+        Page<Partidas> page = new PageImpl<>(Arrays.asList(new Partidas(), new Partidas()));
+        boolean goleada = false;
+        when(partidasRepository.findAll(pageable)).thenReturn(page);
+        when(partidasRepository.buscarPartidasGoleadas(pageable,goleada)).thenReturn(page);
 
-//    @Test
-//    void getPartidas_RetornaPaginaVaziaQuandoNaoHaPartidas() {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<Partidas> page = new PageImpl<>(List.of());
-//        when(partidasRepository.findAll(pageable)).thenReturn(page);
-//
-//        Page<Partidas> resultado = partidasService.getPartidas(pageable);
-//
-//        Assertions.assertNotNull(resultado);
-//        Assertions.assertTrue(resultado.getContent().isEmpty());
-//        verify(partidasRepository, times(1)).findAll(pageable);
-//    }
+        Page<Partidas> resultado = partidasService.getPartidas(pageable,goleada);
+
+        Assertions.assertNotNull(resultado);
+        Assertions.assertEquals(2, resultado.getContent().size());
+        verify(partidasRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
+    void getPartidas_RetornaPaginaVaziaQuandoNaoHaPartidas() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Partidas> page = new PageImpl<>(List.of());
+        boolean goleada = false;
+
+        when(partidasRepository.findAll(pageable)).thenReturn(page);
+
+        Page<Partidas> resultado = partidasService.getPartidas(pageable, goleada);
+
+        Assertions.assertNotNull(resultado);
+        Assertions.assertTrue(resultado.getContent().isEmpty());
+        verify(partidasRepository, times(1)).findAll(pageable);
+    }
 
 
     @Test
