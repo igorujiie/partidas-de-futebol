@@ -32,7 +32,6 @@ Aplicação Spring Boot para gerenciamento de partidas de futebol, clubes, está
    git clone https://github.
    
 
-
 ## Collection de Testes (Postman)
 
 Você pode testar a API utilizando a collection do Postman disponível no repositório.
