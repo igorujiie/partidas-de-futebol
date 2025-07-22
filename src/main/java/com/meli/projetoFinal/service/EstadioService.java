@@ -2,7 +2,7 @@ package com.meli.projetoFinal.service;
 
 import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
-import com.meli.projetoFinal.dto.EstadioDTO;
+import com.meli.projetoFinal.dto.request.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;

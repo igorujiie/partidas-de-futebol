@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.EstadioDTO;
+import com.meli.projetoFinal.dto.request.EstadioDTO;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.service.EstadioService;
 import org.junit.jupiter.api.BeforeEach;

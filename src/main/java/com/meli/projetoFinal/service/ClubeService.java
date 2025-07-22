@@ -2,7 +2,7 @@ package com.meli.projetoFinal.service;
 
 import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
-import com.meli.projetoFinal.dto.ClubeDTO;
+import com.meli.projetoFinal.dto.request.ClubeDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estado;
 import com.meli.projetoFinal.repository.ClubeRepository;

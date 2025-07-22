@@ -1,6 +1,10 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.*;
+import com.meli.projetoFinal.dto.request.PartidasDTO;
+import com.meli.projetoFinal.dto.response.ConfrontoDiretoDTO;
+import com.meli.projetoFinal.dto.response.RankingDTO;
+import com.meli.projetoFinal.dto.response.RetrospectoAdversarioDTO;
+import com.meli.projetoFinal.dto.response.RetrospectoClubeDTO;
 import com.meli.projetoFinal.model.Partidas;
 import com.meli.projetoFinal.service.PartidasService;
 import org.junit.jupiter.api.BeforeEach;
