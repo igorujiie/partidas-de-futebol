@@ -238,12 +238,6 @@ public class PartidasService {
         return new RetrospectoClubeDTO(clube.getId(), clube.getNome(), vitorias, empates, derrotas, golsFeitos, golsSofridos);
     }
 
-    private static int[] calcularGols(Partidas partida, Long clubeAId) {
-        boolean ehTimeCasa = partida.getClubeCasa().getId().equals(clubeAId);
-        int golsA = ehTimeCasa ? partida.getGolsCasa() : partida.getGolsVisitante();
-        int golsB = ehTimeCasa ? partida.getGolsVisitante() : partida.getGolsCasa();
-        return new int[]{golsA, golsB};
-    }
 
     private Clube getClube(Long clubeId) {
         return clubeRepository.findById(clubeId)
@@ -399,26 +393,4 @@ public class PartidasService {
         return partida.getClubeCasa().getId().equals(clubeId);
     }
 
-    private ConfrontoDiretoDTO gerarRetrospectosDosClubes(Clube clubeA, int vitoriasA, int empatesA, int derrotasA, int golsFeitosA, int golsSofridosA, Clube clubeB, int vitoriasB, int empatesB, int derrotasB, int golsFeitosB, int golsSofridosB, List<Partidas> partidas) {
-        RetrospectoClubeDTO retroA = retrospectoClube(clubeA, vitoriasA, empatesA, derrotasA, golsFeitosA, golsSofridosA);
-        RetrospectoClubeDTO retroB = retrospectoClube(clubeB, vitoriasB, empatesB, derrotasB, golsFeitosB, golsSofridosB);
-
-        ConfrontoDiretoDTO resp = new ConfrontoDiretoDTO();
-        resp.setPartidas(converterParaConfrontoDTO(partidas));
-        resp.setTime1(retroA);
-        resp.setTime2(retroB);
-        return resp;
-    }
-
-    private RetrospectoClubeDTO retrospectoClube(Clube clubeA, int vitoriasA, int empatesA, int derrotasA, int golsFeitosA, int golsSofridosA) {
-        RetrospectoClubeDTO retro = new RetrospectoClubeDTO();
-        retro.setClubeId(clubeA.getId());
-        retro.setClubeNome(clubeA.getNome());
-        retro.setVitorias(vitoriasA);
-        retro.setEmpates(empatesA);
-        retro.setDerrotas(derrotasA);
-        retro.setGolsFeitos(golsFeitosA);
-        retro.setGolsSofridos(golsSofridosA);
-        return retro;
-    }
 }
