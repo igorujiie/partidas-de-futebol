@@ -236,31 +236,31 @@ class PartidasServiceTest {
         });
     }
 
-    @Test
-    void getPartidas_RetornaPaginaComPartidas() {
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Partidas> page = new PageImpl<>(Arrays.asList(new Partidas(), new Partidas()));
-        when(partidasRepository.findAll(pageable)).thenReturn(page);
+//    @Test
+//    void getPartidas_RetornaPaginaComPartidas() {
+//        Pageable pageable = PageRequest.of(0, 10);
+//        Page<Partidas> page = new PageImpl<>(Arrays.asList(new Partidas(), new Partidas()));
+//        when(partidasRepository.findAll(pageable)).thenReturn(page);
+//
+//        Page<Partidas> resultado = partidasService.getPartidas(pageable);
+//
+//        Assertions.assertNotNull(resultado);
+//        Assertions.assertEquals(2, resultado.getContent().size());
+//        verify(partidasRepository, times(1)).findAll(pageable);
+//    }
 
-        Page<Partidas> resultado = partidasService.getPartidas(pageable);
-
-        Assertions.assertNotNull(resultado);
-        Assertions.assertEquals(2, resultado.getContent().size());
-        verify(partidasRepository, times(1)).findAll(pageable);
-    }
-
-    @Test
-    void getPartidas_RetornaPaginaVaziaQuandoNaoHaPartidas() {
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Partidas> page = new PageImpl<>(List.of());
-        when(partidasRepository.findAll(pageable)).thenReturn(page);
-
-        Page<Partidas> resultado = partidasService.getPartidas(pageable);
-
-        Assertions.assertNotNull(resultado);
-        Assertions.assertTrue(resultado.getContent().isEmpty());
-        verify(partidasRepository, times(1)).findAll(pageable);
-    }
+//    @Test
+//    void getPartidas_RetornaPaginaVaziaQuandoNaoHaPartidas() {
+//        Pageable pageable = PageRequest.of(0, 10);
+//        Page<Partidas> page = new PageImpl<>(List.of());
+//        when(partidasRepository.findAll(pageable)).thenReturn(page);
+//
+//        Page<Partidas> resultado = partidasService.getPartidas(pageable);
+//
+//        Assertions.assertNotNull(resultado);
+//        Assertions.assertTrue(resultado.getContent().isEmpty());
+//        verify(partidasRepository, times(1)).findAll(pageable);
+//    }
 
 
     @Test

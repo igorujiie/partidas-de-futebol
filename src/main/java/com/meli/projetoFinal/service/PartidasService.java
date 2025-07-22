@@ -80,7 +80,10 @@ public class PartidasService {
         return partidasRepository.findById(id).orElseThrow(() -> new DadoNaoEncontradoException("Partida não encontrada."));
     }
 
-    public Page<Partidas> getPartidas(Pageable pageable) {
+    public Page<Partidas> getPartidas(Pageable pageable, boolean goleadas) {
+        if (goleadas) {
+            return partidasRepository.buscarPartidasGoleadas(pageable, goleadas);
+        }
         return partidasRepository.findAll(pageable);
     }
 

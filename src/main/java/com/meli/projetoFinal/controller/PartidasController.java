@@ -41,8 +41,8 @@ public class PartidasController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Partidas>> listarPartidas(Pageable pageable) {
-        Page<Partidas> partidas = partidasService.getPartidas(pageable);
+    public ResponseEntity<Page<Partidas>> listarPartidas(Pageable pageable, @RequestParam(required = false) boolean goleada) {
+        Page<Partidas> partidas = partidasService.getPartidas(pageable, goleada);
         return ResponseEntity.status(HttpStatus.OK).body(partidas);
     }
 
