@@ -1,4 +1,4 @@
-package com.meli.projetoFinal.dto;
+package com.meli.projetoFinal.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

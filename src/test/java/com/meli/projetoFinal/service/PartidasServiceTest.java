@@ -1,6 +1,10 @@
 package com.meli.projetoFinal.service;
 
-import com.meli.projetoFinal.dto.*;
+import com.meli.projetoFinal.dto.request.PartidasDTO;
+import com.meli.projetoFinal.dto.response.ConfrontoDiretoDTO;
+import com.meli.projetoFinal.dto.response.RankingDTO;
+import com.meli.projetoFinal.dto.response.RetrospectoAdversarioDTO;
+import com.meli.projetoFinal.dto.response.RetrospectoClubeDTO;
 import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.model.Clube;

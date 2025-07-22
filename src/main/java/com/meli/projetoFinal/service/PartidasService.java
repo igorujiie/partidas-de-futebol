@@ -1,9 +1,10 @@
 package com.meli.projetoFinal.service;
 
+import com.meli.projetoFinal.dto.request.PartidasDTO;
+import com.meli.projetoFinal.dto.response.*;
 import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.exception.DadosInvalidosException;
-import com.meli.projetoFinal.dto.*;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.model.Partidas;

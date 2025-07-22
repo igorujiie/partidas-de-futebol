@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.templates;
 
-import com.meli.projetoFinal.dto.PartidasDTO;
+import com.meli.projetoFinal.dto.request.PartidasDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estadio;
 

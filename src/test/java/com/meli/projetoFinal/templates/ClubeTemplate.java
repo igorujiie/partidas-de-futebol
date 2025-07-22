@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.templates;
 
-import com.meli.projetoFinal.dto.ClubeDTO;
+import com.meli.projetoFinal.dto.request.ClubeDTO;
 
 import java.time.LocalDate;
 

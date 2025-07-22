@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.controller;
 
-import com.meli.projetoFinal.dto.ClubeDTO;
+import com.meli.projetoFinal.dto.request.ClubeDTO;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estado;
 import com.meli.projetoFinal.service.ClubeService;
