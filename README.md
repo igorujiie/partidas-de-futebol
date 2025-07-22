@@ -29,8 +29,9 @@ Aplicação Spring Boot para gerenciamento de partidas de futebol, clubes, está
 
 1. Clone o repositório:
    ```sh
-   git clone https://github.
+   https://github.com/igorujiie/partidas-de-futebol.git
    
+
 
 ## Collection de Testes (Postman)
 
