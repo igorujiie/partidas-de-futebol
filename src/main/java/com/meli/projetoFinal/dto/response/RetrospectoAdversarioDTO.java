@@ -1,4 +1,4 @@
-package com.meli.projetoFinal.dto;
+package com.meli.projetoFinal.dto.response;
 
 
 import lombok.AllArgsConstructor;
@@ -8,15 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class RetrospectoClubeDTO {
-    private Long clubeId;
-    private String clubeNome;
+@AllArgsConstructor
+public class RetrospectoAdversarioDTO {
+    private Long adversarioId;
+    private String adversarioNome;
     private int vitorias;
     private int empates;
     private int derrotas;
     private int golsFeitos;
     private int golsSofridos;
-
 }

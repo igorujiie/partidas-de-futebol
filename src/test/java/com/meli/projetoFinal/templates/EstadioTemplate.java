@@ -1,6 +1,6 @@
 package com.meli.projetoFinal.templates;
 
-import com.meli.projetoFinal.dto.EstadioDTO;
+import com.meli.projetoFinal.dto.request.EstadioDTO;
 
 public class EstadioTemplate {
 

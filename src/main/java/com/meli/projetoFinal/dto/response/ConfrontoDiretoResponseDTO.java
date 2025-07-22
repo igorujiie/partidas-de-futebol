@@ -1,4 +1,4 @@
-package com.meli.projetoFinal.dto;
+package com.meli.projetoFinal.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

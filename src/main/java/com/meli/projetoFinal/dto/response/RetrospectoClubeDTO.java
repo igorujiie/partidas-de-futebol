@@ -1,21 +1,22 @@
-package com.meli.projetoFinal.dto;
+package com.meli.projetoFinal.dto.response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RankingDTO {
-
+public class RetrospectoClubeDTO {
     private Long clubeId;
     private String clubeNome;
-    private int pontos;
-    private int gols;
     private int vitorias;
-    private int jogos;
+    private int empates;
+    private int derrotas;
+    private int golsFeitos;
+    private int golsSofridos;
 
 }
