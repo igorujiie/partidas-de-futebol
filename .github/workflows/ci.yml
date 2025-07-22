@@ -8,8 +8,7 @@ on:
   push:
     branches:
       - 'feature/*'
-  pull_request:
-    branches: [ main, develop ]
+    # Removido o 'pull_request' para deixar mais claro
 
 jobs:
   open-pull-request:
@@ -24,5 +23,7 @@ jobs:
           base: develop
           branch: ${{ github.ref_name }}
           title: 'Merge ${{ github.ref_name }} into develop'
-          body: 'Pull request automático para merge da feature na develop.'
+          body: |
+            Pull request automático para merge da feature na develop.
+            > Atenção: O merge NÃO será feito automaticamente. Por favor, revise e faça o merge manualmente.
           token: ${{ secrets.GITHUB_TOKEN }}
