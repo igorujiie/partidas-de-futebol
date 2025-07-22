@@ -1,5 +1,9 @@
 name: Continuous integration
 
+permissions:
+  contents: write
+  pull-requests: write
+
 # Esse script deve ser executado sempre que alguém executar
 # um GIT PUSH para qualquer branch feature/*.
 on:
