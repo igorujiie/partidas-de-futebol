@@ -10,9 +10,6 @@ on:
   push:
     branches:
       - 'feature/*'
-  pull_request:
-    branches:
-      - 'develop'
 
 jobs:
   merge-into-develop:
@@ -30,4 +27,4 @@ jobs:
         with:
           type: now
           target_branch: develop
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
