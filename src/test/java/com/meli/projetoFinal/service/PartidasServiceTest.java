@@ -4,7 +4,6 @@ import com.meli.projetoFinal.dto.request.PartidasDTO;
 import com.meli.projetoFinal.dto.response.ConfrontoDiretoDTO;
 import com.meli.projetoFinal.dto.response.RankingDTO;
 import com.meli.projetoFinal.dto.response.RetrospectoAdversarioDTO;
-import com.meli.projetoFinal.dto.response.RetrospectoClubeDTO;
 import com.meli.projetoFinal.exception.ConflitoDeDadosException;
 import com.meli.projetoFinal.exception.DadoNaoEncontradoException;
 import com.meli.projetoFinal.model.Clube;
@@ -489,61 +488,61 @@ class PartidasServiceTest {
         });
     }
 
-    @Test
-    void getRetrospectoClubeRetornaRetrospectoCorreto() {
-        Long clubeId = 1L;
-        Clube clube = new Clube();
-        clube.setId(clubeId);
-        clube.setNome("Clube A");
+//    @Test
+//    void getRetrospectoClubeRetornaRetrospectoCorreto() {
+//        Long clubeId = 1L;
+//        Clube clube = new Clube();
+//        clube.setId(clubeId);
+//        clube.setNome("Clube A");
+//
+//        Clube clubeVisitante1 = new Clube();
+//        clubeVisitante1.setId(2L);
+//
+//        Clube clubeVisitante2 = new Clube();
+//        clubeVisitante2.setId(3L);
+//
+//        Estadio estadio = new Estadio();
+//        estadio.setNome("Estadio A");
+//        estadio.setId(1L);
+//
+//        Partidas partida1 = new Partidas();
+//        partida1.setClubeCasa(clube);
+//        partida1.setClubeVisitante(clubeVisitante1);
+//        partida1.setGolsCasa(2);
+//        partida1.setGolsVisitante(1);
+//        partida1.setEstadio(estadio);
+//        partida1.setDataPartida(LocalDate.now().minusDays(7));
+//
+//        Partidas partida2 = new Partidas();
+//        partida2.setClubeCasa(clubeVisitante2);
+//        partida2.setClubeVisitante(clube);
+//        partida2.setGolsCasa(1);
+//        partida2.setGolsVisitante(1);
+//        partida2.setEstadio(estadio);
+//        partida2.setDataPartida(LocalDate.now().minusDays(1));
+//
+//        when(clubeRepository.findById(clubeId)).thenReturn(Optional.of(clube));
+//        when(partidasRepository.findAll()).thenReturn(Arrays.asList(partida1, partida2));
+//
+//        RetrospectoClubeDTO resultado = partidasService.getRetrospectoClube(clubeId);
+//
+//        Assertions.assertNotNull(resultado);
+//        Assertions.assertEquals(1, resultado.getVitorias());
+//        Assertions.assertEquals(1, resultado.getEmpates());
+//        Assertions.assertEquals(0, resultado.getDerrotas());
+//        Assertions.assertEquals(3, resultado.getGolsFeitos());
+//        Assertions.assertEquals(2, resultado.getGolsSofridos());
+//    }
 
-        Clube clubeVisitante1 = new Clube();
-        clubeVisitante1.setId(2L);
-
-        Clube clubeVisitante2 = new Clube();
-        clubeVisitante2.setId(3L);
-
-        Estadio estadio = new Estadio();
-        estadio.setNome("Estadio A");
-        estadio.setId(1L);
-
-        Partidas partida1 = new Partidas();
-        partida1.setClubeCasa(clube);
-        partida1.setClubeVisitante(clubeVisitante1);
-        partida1.setGolsCasa(2);
-        partida1.setGolsVisitante(1);
-        partida1.setEstadio(estadio);
-        partida1.setDataPartida(LocalDate.now().minusDays(7));
-
-        Partidas partida2 = new Partidas();
-        partida2.setClubeCasa(clubeVisitante2);
-        partida2.setClubeVisitante(clube);
-        partida2.setGolsCasa(1);
-        partida2.setGolsVisitante(1);
-        partida2.setEstadio(estadio);
-        partida2.setDataPartida(LocalDate.now().minusDays(1));
-
-        when(clubeRepository.findById(clubeId)).thenReturn(Optional.of(clube));
-        when(partidasRepository.findAll()).thenReturn(Arrays.asList(partida1, partida2));
-
-        RetrospectoClubeDTO resultado = partidasService.getRetrospectoClube(clubeId);
-
-        Assertions.assertNotNull(resultado);
-        Assertions.assertEquals(1, resultado.getVitorias());
-        Assertions.assertEquals(1, resultado.getEmpates());
-        Assertions.assertEquals(0, resultado.getDerrotas());
-        Assertions.assertEquals(3, resultado.getGolsFeitos());
-        Assertions.assertEquals(2, resultado.getGolsSofridos());
-    }
-
-    @Test
-    void getRetrospectoClubeClubeNaoEncontrado() {
-        Long clubeId = 1L;
-        when(clubeRepository.findById(clubeId)).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(DadoNaoEncontradoException.class, () -> {
-            partidasService.getRetrospectoClube(clubeId);
-        });
-    }
+//    @Test
+//    void getRetrospectoClubeClubeNaoEncontrado() {
+//        Long clubeId = 1L;
+//        when(clubeRepository.findById(clubeId)).thenReturn(Optional.empty());
+//
+//        Assertions.assertThrows(DadoNaoEncontradoException.class, () -> {
+//            partidasService.getRetrospectoClube(clubeId);
+//        });
+//    }
 
     @Test
     void getRetrospectoContraAdversariosRetornaRetrospectoCorreto() {

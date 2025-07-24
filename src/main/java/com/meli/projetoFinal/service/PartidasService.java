@@ -8,6 +8,7 @@ import com.meli.projetoFinal.exception.DadosInvalidosException;
 import com.meli.projetoFinal.model.Clube;
 import com.meli.projetoFinal.model.Estadio;
 import com.meli.projetoFinal.model.Partidas;
+import com.meli.projetoFinal.model.TipoClubePartida;
 import com.meli.projetoFinal.repository.ClubeRepository;
 import com.meli.projetoFinal.repository.EstadioRepository;
 import com.meli.projetoFinal.repository.PartidasRepository;
@@ -17,11 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class PartidasService {
@@ -94,16 +91,23 @@ public class PartidasService {
         partidasRepository.deleteById(id);
     }
 
-    public RetrospectoClubeDTO getRetrospectoClube(Long clubeId) {
+    public RetrospectoClubeDTO getRetrospectoClube(Long clubeId, String clubeTipo) {
         Clube clube = getClube(clubeId);
+        List<Partidas> partidas;
+        TipoClubePartida tipoClubePartida = TipoClubePartida.valueOf(clubeTipo.toUpperCase());
 
-        List<Partidas> partidas = partidasRepository.findAll().stream()
-                .filter(p -> p.getClubeCasa().getId().equals(clubeId) || p.getClubeVisitante().getId().equals(clubeId))
-                .toList();
+        if (tipoClubePartida == TipoClubePartida.CASA) {
+            partidas = partidasRepository.findAll().stream()
+                    .filter(p -> p.getClubeCasa().getId().equals(clubeId))
+                    .toList();
+        } else {
+            partidas = partidasRepository.findAll().stream()
+                    .filter(p -> p.getClubeVisitante().getId().equals(clubeId))
+                    .toList();
+        }
 
         return calcularRetrospectoClube(clube, clubeId, partidas);
     }
-
 
 
     public List<RetrospectoAdversarioDTO> getRetrospectoContraAdversarios(Long clubeId) {

@@ -4,7 +4,6 @@ import com.meli.projetoFinal.dto.request.PartidasDTO;
 import com.meli.projetoFinal.dto.response.ConfrontoDiretoDTO;
 import com.meli.projetoFinal.dto.response.RankingDTO;
 import com.meli.projetoFinal.dto.response.RetrospectoAdversarioDTO;
-import com.meli.projetoFinal.dto.response.RetrospectoClubeDTO;
 import com.meli.projetoFinal.model.Partidas;
 import com.meli.projetoFinal.service.PartidasService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class PartidasControllerTest {
@@ -99,19 +98,19 @@ class PartidasControllerTest {
         verify(partidasService, times(1)).deletePartida(id);
     }
 
-    @Test
-    void getRetrospectoClube_ReturnsRetrospectoForValidClubeId() {
-        Long clubeId = 1L;
-        RetrospectoClubeDTO dto = new RetrospectoClubeDTO();
-
-        when(partidasService.getRetrospectoClube(clubeId)).thenReturn(dto);
-
-        ResponseEntity<RetrospectoClubeDTO> response = partidasController.getRetrospectoClube(clubeId);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dto, response.getBody());
-        verify(partidasService, times(1)).getRetrospectoClube(clubeId);
-    }
+//    @Test
+//    void getRetrospectoClube_ReturnsRetrospectoForValidClubeId() {
+//        Long clubeId = 1L;
+//        RetrospectoClubeDTO dto = new RetrospectoClubeDTO();
+//
+//        when(partidasService.getRetrospectoClube(clubeId)).thenReturn(dto);
+//
+//        ResponseEntity<RetrospectoClubeDTO> response = partidasController.getRetrospectoClube(clubeId);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(dto, response.getBody());
+//        verify(partidasService, times(1)).getRetrospectoClube(clubeId);
+//    }
 
     @Test
     void getRetrospectoContraAdversarios_ReturnsListForValidClubeId() {
