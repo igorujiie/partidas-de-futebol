@@ -10,11 +10,11 @@ import com.meli.projetoFinal.service.PartidasService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -60,8 +60,9 @@ public class PartidasController {
 
 
     @GetMapping("/retrospecto/{clubeId}")
-    public ResponseEntity<RetrospectoClubeDTO> getRetrospectoClube(@PathVariable Long clubeId) {
-        RetrospectoClubeDTO dto = partidasService.getRetrospectoClube(clubeId);
+    public ResponseEntity<RetrospectoClubeDTO> getRetrospectoClube(@PathVariable Long clubeId,
+                                                                   @RequestParam(required = false) String tipoClubePartida) {
+        RetrospectoClubeDTO dto = partidasService.getRetrospectoClube(clubeId, tipoClubePartida);
         return ResponseEntity.ok(dto);
     }
 
